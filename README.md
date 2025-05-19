@@ -26,14 +26,14 @@ The example applicative flowchart is illustrated below :
 
 ```mermaid
 flowchart TD
-    A["MAIN"] --> B["Initialize Apps terminal \n(baudrate = 115200)"]
+    A["MAIN"] --> B["Initialize Apps terminal (baudrate = 115200)"]
     B --> C["Print example title and instructions"]
     C --> D["Initialize STSE Handler"]
     D --> E["Parse and print Root CA certificate"]
     E --> F["Get STSAFE-A leaf-certificate"]
     F --> G["Parse and print STSAFE-A leaf-certificate"]
     G --> H["Verify device certificate signature using Root CA public key"]
-    H --> I["Generate Challenge \n(Random Number)"]
+    H --> I["Generate Challenge (Random Number)"]
     I --> J["Get Challenge signature from STSAFE-A "]
     J --> K["Verify signature using STSAFE-A pubkey"]
 ```
