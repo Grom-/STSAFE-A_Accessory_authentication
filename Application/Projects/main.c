@@ -20,8 +20,8 @@
 #include "Application/Apps_utils/Apps_utils.h"
 
 /* Defines -------------------------------------------------------------------*/
-/* Root CA key used for STSE-A SPL02/SPL03 */
-#define CA_SELF_SIGNED_CERTIFICATE_01 \
+/* Root CA key used for STSAFE-A SPL devices */
+#define STM_STSAFE_A_PROD_CA_01_certificate \
   0x30,0x82,0x01,0xA0,0x30,0x82,0x01,0x46,0xA0,0x03,0x02,0x01,0x02,0x02,0x01,0x01, \
   0x30,0x0A,0x06,0x08,0x2A,0x86,0x48,0xCE,0x3D,0x04,0x03,0x02,0x30,0x4F,0x31,0x0B, \
   0x30,0x09,0x06,0x03,0x55,0x04,0x06,0x13,0x02,0x4E,0x4C,0x31,0x1E,0x30,0x1C,0x06, \
@@ -55,12 +55,13 @@
 
 int main (void)
 {
+
+	static const uint8_t ca_selfsigned_cert[] = {STM_STSAFE_A_PROD_CA_01_certificate};
 	stse_ReturnCode_t stse_ret = STSE_API_INVALID_PARAMETER;
 	stse_Handler_t stse_handler;
 	PLAT_UI16 certificate_size;
 	stse_certificate_t parsed_stse_certificate;
 	stse_certificate_t parsed_ca_selfsigned_cert;
-	static const uint8_t ca_selfsigned_cert[] = {CA_SELF_SIGNED_CERTIFICATE_01};
 
 	/* - Initialize Terminal */
 	apps_terminal_init(115200);
@@ -68,10 +69,13 @@ int main (void)
 	/* - Print Example instruction on terminal */
 	printf("\x1B[1;1H\x1B[2J");
 	printf(    "----------------------------------------------------------------------------------------------------------------");
-	printf("\n\r-                          STSAFE-A110 Multi-Steps Device Authentication Example                               -");
+	printf("\n\r-                               STSAFE-A Device Authentication Example                                         -");
 	printf("\n\r----------------------------------------------------------------------------------------------------------------");
-	printf("\n\r- This example illustrates STSAFE-A110 device authentication process using Multi-Step approach.                -");
-	printf("\n\r- it can be taken as reference for building distant server authentication use cases.                           -");
+	printf("\n\r- This software illustrates Device authentication mechanism using STMicroelectronics' STSAFE-A Secure Element  -");
+	printf("\n\r----------------------------------------------------------------------------------------------------------------");
+	printf("\n\r-                                                                                                              -");
+	printf("\n\r-                                 COPYRIGHT 2022 STMicroelectronics                                            -");
+	printf("\n\r-                                                                                                              -");
 	printf("\n\r----------------------------------------------------------------------------------------------------------------");
 
 	/* ## Initialize STSAFE-A1xx device handler */
@@ -81,9 +85,10 @@ int main (void)
 		printf("\n\r ## stse_set_default_handler_value ERROR : 0x%04X\n\r",stse_ret);
 		while(1);
 	}
-	stse_handler.device_type = STSAFE_A110;
+	stse_handler.device_type = STSAFE_A120;
+	stse_handler.io.Devaddr = 0x20;
 
-	printf("\n\r - Initialize target STSAFE-A110");
+	printf("\n\r - Initialize target STSAFE-A120");
 	stse_ret = stse_init(&stse_handler);
 	if (stse_ret != STSE_OK)
 	{
@@ -120,7 +125,6 @@ int main (void)
 	}
 
 	/* ## Parse target STSAFE-Axxx certificate */
-
 	stse_ret = stse_certificate_parse(stse_certificate, &parsed_stse_certificate, NULL);
 	if (stse_ret != STSE_OK)
 	{
