@@ -441,28 +441,36 @@ void apps_print_data_partition_record_table ( stse_Handler_t *pSTSE )
 	}
 }
 
-void apps_print_command_ac_record_table ( stse_cmd_authorization_record_t*  command_ac_record_table,
-		uint8_t total_command_count)
+void apps_print_command_ac_record_table (stse_Handler_t *pSTSE)
 {
-	uint8_t i;
+	uint8_t i = 0;
+	uint8_t total_command_count = 0;
+	stse_cmd_authorization_CR_t change_rights;
 
+	stse_device_get_command_count(pSTSE, &total_command_count);
+	stse_cmd_authorization_record_t record_table[total_command_count];
+	stse_device_get_command_AC_records(pSTSE, total_command_count, &change_rights, record_table);
+
+	printf("\n\r  Command AC and encryption Change rights : ");
+	printf("\n\r  - cmd_encryption CR : %s", change_rights.host_encryption_flag_CR == 1 ? "  YES " : "  NO  ");
+	printf("\n\r  - cmd AC CR : %s", change_rights.cmd_AC_CR == 1 ? "  YES " : "  NO  ");
 	printf("\n\r  HEADER | EXT-HEADER |    AC   | CMDEnc | RSPEnc  ");
 	for(i=0;i<total_command_count;i++)
 	{
 		printf("\n\r");
 		/*- print HEADER (col 1)*/
-		printf("   0x%02X  | ",command_ac_record_table[i].header );
+		printf("   0x%02X  | ",record_table[i].header );
 
 		/*- print EXT-HEADER (col 2)*/
-		if (command_ac_record_table[i].extended_header != 0)
+		if (record_table[i].extended_header != 0)
 		{
-			printf("    0x%02X   | ", command_ac_record_table[i].extended_header);
+			printf("    0x%02X   | ", record_table[i].extended_header);
 		} else {
 			printf("     -     | ");
 		}
 
 		/*- Access conditions (col 3) */
-		switch (command_ac_record_table[i].command_AC)
+		switch (record_table[i].command_AC)
 		{
 			case STSE_CMD_AC_NEVER :
 				printf(" NEVER  |");
@@ -494,10 +502,10 @@ void apps_print_command_ac_record_table ( stse_cmd_authorization_record_t*  comm
 		}
 
 		/*- cmd encryption (col 4) */
-		printf(" %s | ",(command_ac_record_table[i].host_encryption_flags.cmd) == 1 ? "  YES " : "  NO  ");
+		printf(" %s | ",(record_table[i].host_encryption_flags.cmd) == 1 ? "  YES " : "  NO  ");
 
 		/*- rsp encryption (col 5) */
-		printf(" %s | ",(command_ac_record_table[i].host_encryption_flags.rsp) == 1 ? "  YES " : "  NO  ");
+		printf(" %s | ",(record_table[i].host_encryption_flags.rsp) == 1 ? "  YES " : "  NO  ");
 
 	}
 }

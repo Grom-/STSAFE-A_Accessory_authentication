@@ -58,8 +58,7 @@ void apps_print_generic_public_key_slot_configuration_flags( stse_Handler_t *pST
 
 void apps_print_hex_buffer (uint8_t* buffer ,uint16_t buffer_size);
 
-void apps_print_command_ac_record_table(stse_cmd_authorization_record_t*  command_ac_record_table,
-		uint8_t total_command_count);
+void apps_print_command_ac_record_table (stse_Handler_t *pSTSE);
 
 void apps_print_life_cycle_state (stsafea_life_cycle_state_t life_cycle_state);
 
